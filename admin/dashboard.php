@@ -2,100 +2,53 @@
 <html lang="en" class="no-js">
   <html>
     <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../css/dashboard.css" type="text/css">
-      </head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+    <link rel="stylesheet" href="../css/dashboard.css" />
+    <script src="https://kit.fontawesome.com/6023332cf2.js" crossorigin="anonymous"></script>
+    <title>Wmsu Collection System</title>
+    </head>
+
       <body>
+      <div class="d-flex" id="wrapper">
+        <div class="bg-white" id="sidebar-wrapper">
+            <img src="../login/images/logo.jpg" width ="200" alt="CCS COLLECTION FEE">
+            <div class="darna my-3">
+                <a href="#" class="active">
+                    Dashboard</a>
+                <a href="#" class="#">
+                    Fees</a>
+                <a href="#" class="#">
+                    Remit Records</a>
+                <a href="#" class="# ">
+                    Colleges</a>
+                <a href="#" class="#"> 
+                    Funds</a>
+                <a href="#" class="#"> 
+                     Financial Report</a>
+                <a href="#" class="#">
+                     Audit Log</a> 
+                     <a href="#" class="#"> 
+                     Admin Settings</a>
+                <a href="#" class="#" id='a_logout'>
+                    Logout</a>
+            </div>
+        </div>
+  <div id="page-content-wrapper">
+    <nav class="navbar navbar-expand-lg navbar-light bg-active py-4 px-4">
+        <div class="d-flex align-items-center">
+            <i class="fas fa-align-left primary-text fs-4 me-3" id="menu-toggle"></i>
+            <h2 class="fs-2 m-0">Dashboard</h2>
+        </div>
+    </nav>
+  <div class="graphBox">
+    <div class="box">
+    <canvas id="myChart"></canvas>
     </div>
-		<title>Dashboard</title>
-    <div class="sidebar">
-      <div class="profile_info">
-        <img src="../login/images/logo.jpg" width="150"  alt="CCS COLLECTION FEE">
-      </div>
-      <a class="active" href="/admin/dashboard.php">Dashboard</a>
-      <a href="../fees/fees.php">Fees</a>
-      <a href="../remit-records/remit-records.php">Remit Records</a>
-      <a href="../colleges/colleges.php">Colleges</a>
-      <a href="../funds/funds.php">Funds</a>
-      <a href="../financial-report/financial-report.php">Financial Report</a>
-      <a href="../audit-log/audit-log.php">Audit log</a>
-      <a href="../admin-settings/admin-settings.php">Admin Settings</a>
-      <a href="../login/index.php" id='a_logout'> Log Out</a>
-    </div>
-      </div>
-    <div class="content">
-      <div class="chartMenu">
-      <p><b>Dashboard<b></p>
-    </div>
-     <div class="chartBox">
-        <canvas id="myChart"></canvas>
-      </div>
-    </div>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="../js/chart.js"></script>
 
-
-    // setup
-    const data = {
-      labels: ['College of Agriculture', 'College of Architecture', 
-      'College of Asian and Islamic Studies', 'College of Computing Studies', 
-      'College of Criminal Justice Education', 
-      'College of Engineering', 'College of Forestry and Environmental Studies', 'College of Home Economics', 
-      'College of Law', 'College of Liberal Arts', 'College of Nursing',
-      'College of Public Administration and Development Studies', 'College of Sports Science and Physical Education',
-      'College of Science and Mathematics', 'College of Social Work and Community Deveolpment', 
-      'College of Teacher Education'],
-      datasets: [{
-        label: 'Target: PHP 5,000,000',
-        data: [2300000, 2300000, 1500000, 5000000, 3000000, 5000000, 2300000, 2300000, 
-        3000000, 1000000, 2300000, 2300000, 1230000, 2300000, 2300000, 3000000],
-        borderColor: [
-          'rgba(255, 26, 104, 0.2)',
-          'rgba(54, 162, 235, 0.2)',
-          'rgba(255, 206, 86, 0.2)',
-          'rgba(75, 192, 192, 0.2)',
-          'rgba(153, 102, 255, 0.2)',
-          'rgba(255, 159, 64, 0.2)',
-          'rgba(0, 0, 0, 0.2)'
-        ],
-        backgroundColor: [
-          'rgba(255, 26, 104, 1)',
-          'rgba(54, 162, 235, 1)',
-          'rgba(255, 206, 86, 1)',
-          'rgba(75, 192, 192, 1)',
-          'rgba(153, 102, 255, 1)',
-          'rgba(255, 159, 64, 1)',
-          'rgba(0, 0, 0, 1)'
-        ],
-        borderWidth: 1,
-        borderSkipped: false,
-        borderRadius: 5,
-        barPercentage: 0.2,
-        categoryPercentage: 0.9
-      }]
-    };
-
-    // config block
-    const config = {
-      type: 'bar',
-      data,
-      options: {
-        maintainAspectRatio: false,
-        indexAxis: 'y',
-        scales: {
-          y: {
-            beginAtZero: true
-          }
-        }
-      }
-    };
-
-    // render init block
-    const myChart = new Chart(
-      document.getElementById('myChart'),
-      config
-    );
-    </script>
-
-  </body>
-</html>

@@ -16,7 +16,7 @@
     <div class="d-flex" id="wrapper">
         <!-- Sidebar -->
         <div class="bg-white" id="sidebar-wrapper">
-            <img src="logo.jpg" width ="200" alt="CCS COLLECTION FEE">
+            <img src="../login/images/logo.jpg" width ="200" alt="CCS COLLECTION FEE">
             <div class="darna my-3">
                 <a href="#" class="#">
                     Dashboard</a>
