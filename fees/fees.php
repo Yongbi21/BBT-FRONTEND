@@ -1,23 +1,20 @@
 <?php
 
-    //resume session here to fetch session values
-    //session_start();
-    /*
-        if user is not login then redirect to login page,
-        this is to prevent users from accessing pages that requires
-        authentication such as the dashboard
-    */
-   // if (!isset($_SESSION['logged-in'])){
-        //header('location: ../login/login.php');
-   // }
-    //if the above code is false then html below will be displayed
+    // resume session here to fetch session values
+    session_start();
 
-   // require_once '../tools/variables.php';
-    //$page_title = 'CCS COLLECTION | Show Fees';
-    //$Fees = 'active';
+	//prevent horny people
+    if (!isset($_SESSION['logged_id'])){
+        header('location: ../public/logout.php');
+    }
+	require_once '../classes/database.class.php';
+	require_once '../classes/fee.class.php';
+	require_once '../classes/semester.class.php';
+	require_once '../classes/schoolyear.class.php';
+	require_once '../classes/feeSchedule.class.php';
 
-     require_once '../includes/header.php';
-//     require_once '../includes/sidebar.php';
+
+
 ?>
 <!doctype html>
 <html lang="en" class="no-js">
@@ -46,23 +43,16 @@
         <!-- Sidebar with bootstrap -->
         <div class="bg-white" id="sidebar-wrapper">
             <img src="../images/logo.jpg" width ="200" alt="CCS COLLECTION FEE">
-            <div class="list-group list-group-flush my-3">
-                <a href="../admin/dashboard.php" class="list-group-item list-group-item-action bg-hover second-text fw-bold">Dashboard</a>
-                <a href="../fees/fees.php" class="list-group-item list-group-item-action bg-hover second-text active fw-bold">Fees</a>
-                <a href="../remit-records/remit-records.php" class="list-group-item list-group-item-action bg-hover second-text fw-bold">Remit Records</a>
-                <a href="../college/college.php" class="list-group-item list-group-item-action bg-hover second-text fw-bold">Colleges</a>
-                <a href="../funds/funds.php" class="list-group-item list-group-item-action bg-hover second-text fw-bold">Funds</a>
-                <a href="../financial-report/financial-report.php" class="list-group-item list-group-item-action bg-hover second-text fw-bold">Financial Report</a>
-                <a href="../audit-log/audit-log.php" class="list-group-item list-group-item-action bg-hover second-text fw-bold">Audit Log</a>
-                <button class="list-group-item list-group-item-action bg-hover second-text dropdown-btn fw-bold">Admin Settings</a>
-                <i class="fa fa-caret-down"></i>
-                </button>
-                <div class="list-group-item list-group-item-action bg-hover second-text fw">
-					<ul><a href="../admin-settings/overview.php">Overview</a></ul>
-                    <ul><a href="../admin-settings/user-management.php">User Management</a></ul>
-                    <ul><a href="../admin-settings/colleges.php">Colleges</a></ul>
-                </div>
-                <a href="../public/logout.php" class="list-group-item list-group-item-action bg-hover second-text fw-bold">Logout</a>
+			<div class="list-group list-group-flush my-3">
+                <a href="../admin/dashboard.php" class="list-group-item list-group-item-action bg-hover first-text fw-bold">Dashboard</a>
+                <a href="../fees/fees.php" class="list-group-item list-group-item-action bg-hover first-text fw-bold active">Fees</a>
+                <a href="../remit-records/remit-records.php" class="list-group-item list-group-item-action bg-hover first-text fw-bold">Remit Records</a>
+                <a href="../college/Oldcollege.php" class="list-group-item list-group-item-action bg-hover first-text fw-bold">Colleges</a>
+                <a href="../funds/funds-sub.php" class="list-group-item list-group-item-action bg-hover first-text fw-bold">Funds</a>
+                <a href="../financial-report/financial-report.php" class="list-group-item list-group-item-action bg-hover first-text fw-bold">Financial Report</a>
+                <a href="../audit-log/audit-log.php" class="list-group-item list-group-item-action bg-hover first-text fw-bold">Audit Log</a>
+                <a href="../admin-settings/admin-settings.php" class="list-group-item list-group-item-action bg-hover first-text fw-bold">Admin Settings</a>
+                <a href="../public/logout.php" class="list-group-item list-group-item-action bg-hover fw-bold">Logout</a>
             </div>
         </div>
 		<div class="table-responsive">
@@ -77,140 +67,202 @@
 		<div class="table-wrapper">
 		<div class="table-title">
 				<div class="row">
-					<div class="col-sm-6">
+					<div class="col-sm-4">
+					<input class="form-control border" type="search" name= "search" id="search-input" placeholder="Search Name">
+					<button class="btn btn-primary dropdown-toggle" id ="sort-by" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Sort By </button>
+						<div class="dropdown-menu">
+    					<a class="dropdown-item" href="#">Ascending</a>
+    					<a class="dropdown-item" href="#">Descending</a>
 					</div>
-					<div class="col-sm-6">
-						<a href="#addFeesModal" class="btn btn-success" data-toggle="modal"><i class="material-icons">&#xE147;</i> <span>Add New Fees</span></a>
-						<a href="#deleteFeesModal" class="btn btn-danger" data-toggle="modal"><i class="material-icons">&#xE15C;</i> <span>Delete</span></a>						
+					</div>
+          <div class="col-sm-8">
+						<a href="feeschedpage.php" class="btn btn-success"><i class="material-icons">&#xE147;</i> <span>Fee Sched</span></a>
+						<!-- <a href="#deleteFeesModal" class="btn btn-danger" data-toggle="modal"><i class="material-icons">&#xE15C;</i> <span>Delete</span></a>						 -->
+					</div>
+					<div class="col-sm-8">
+						<a href="#addFeesModal" class="btn btn-success" id = "add-fees" data-toggle="modal"><i class="material-icons">&#xE147;</i> <span>Add New Fees</span></a>
+						<!-- <a href="#deleteFeesModal" class="btn btn-danger" data-toggle="modal"><i class="material-icons">&#xE15C;</i> <span>Delete</span></a>						 -->
 					</div>
 				</div>
 			</div>
+			<div class="table-title">
+				<div class="row">
+					<div class="col-sm-3">
+					</div>
+				</div>
+			</div>
+
 			<table class="table table-striped table-hover">
 				<thead>
 					<tr>
-						<th>
+						<!-- <th>
 							<span class="custom-checkbox">
 								<input type="checkbox" id="selectAll">
 								<label for="selectAll"></label>
 							</span>
-						</th>
-						</th>
+						</th> -->
+						<th>#</th>
 						<th>Type of Fee</th>
 						<th>Description</th>
-						<th>Duration</th>
 						<th>Amount</th>
+            <th>Semester</th>
+						<th>Start Date</th>
+            <th>End Date</th>
+						<th>School Year</th>
 						<th>Action</th>
 					</tr>
 				</thead>
 				<tbody>
-					<tr>
-						<td>
-							<span class="custom-checkbox">
-								<input type="checkbox" id="checkbox1" name="options[]" value="1">
-								<label for="checkbox1"></label>
-							</span>
-						</td>
-						<td>CSC</td>
-						<td>CSC-College Student Council</td>
-						<td>1st Semester</td>
-						<td>Php 200.00</td>
-						<td>
-							<a href="#editFeesModal" class="edit" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i></a>
+        <?php
+                            if($_SESSION['user_type'] == 'admin'){ 
+                        ?>
+		<?php
+					$feeSched = new FeeSchedule();
+					$feeSchedData = $feeSched->showAllDetails();
+					$i = 1;
+					foreach($feeSchedData as $feeSched) {
+            if ($feeSched['fee_type'] == 'University') {
+             
+				?>
+							<tr>
+								<td><?php echo $i; ?></td>
+                <td><?php echo $feeSched['fee_type']; ?></td>
+								<td><?php echo $feeSched['fee_name']; ?></td>
+                <td><?php echo $feeSched['fee_amount']; ?></td>
+                <td><?php echo $feeSched['semester_name']; ?></td>
+								<td><?php echo $feeSched['semester_start_date']; ?></td>
+                <td><?php echo $feeSched['semester_end_date']; ?></td>
+                <td><?php echo $feeSched['school_year_name']; ?></td>
+								<td>
 							<a href="#deleteFeesModal" class="delete" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>
-						</td>
-					</tr>
-					<tr>
-						<td>
-							<span class="custom-checkbox">
-								<input type="checkbox" id="checkbox2" name="options[]" value="1">
-								<label for="checkbox2"></label>
-							</span>
-						</td>
-						<td>CSC</td>
-						<td>CSC-College Student Council</td>
-						<td>1st Semester</td>
-						<td>Php 200.00</td>
-						<td>
-							<a href="#editFeesModal" class="edit" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i></a>
-							<a href="#deleteFeesModal" class="delete" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>
-						</td>
-					</tr>
-					
-				</tbody>
+							</td>
+				</tr>
+					<?php }} ?>
+				 <?php }?>
+					</tbody>
 			</table>
-			<div class="clearfix">
-				<div class="hint-text">Showing <b>1</b> out of <b>25</b> entries</div>
-				<ul class="pagination">
-					<li class="page-item disabled"><a href="#">Previous</a></li>
-					<li class="page-item active"><a href="#" class="page-link">1</a></li>
-					<li class="page-item"><a href="#" class="page-link">2</a></li>
-					<li class="page-item disabled"><a href="#" class="page-link">3</a></li>
-					<li class="page-item"><a href="#" class="page-link">4</a></li>
-					<li class="page-item"><a href="#" class="page-link">5</a></li>
-					<li class="page-item"><a href="#" class="page-link">Next</a></li>
-				</ul>
-			</div>
 		</div>
 	</div>        
 </div>
-<!-- Edit Modal HTML -->
-<div id="addFeesModal" class="modal fade">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<form>
-				<div class="modal-header">						
-					<h4 class="modal-title">Add Fees</h4>
-					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-				</div>
-				<div class="modal-body">					
-					<div class="form-group">
-						<label>Type of Fee</label>
-						<input type="text" class="form-control" required>
-					</div>
-					<div class="form-group">
-						<label>Description</label>
-						<input type="text" class="form-control" required>
-					</div>
-					<div class="form-group">
-						<label>Amount</label>
-						<input type="number" class="form-control" required>
-					</div>					
-				</div>
-				<div class="modal-footer">
-					<input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
-					<input type="submit" class="btn btn-success" value="Add">
-				</div>
-			</form>
-		</div>
-	</div>
+
+<!-- Create Fee Modal PROTOTYPE -->
+<div class="modal Fade" id="feeScheduleModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Fee create schedule</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="feeScheduleForm" action="feesched.php" method="POST">
+		<input type="hidden" name="fee_id" value="<?php echo $fee['fee_id']; ?>">
+          <div class="form-group">
+		  <label for="schoolYear" class="form-label">School Year</label>
+            <select class="form-control" id="schoolYear" name="schoolYear" required>
+              <option value="">-- Select School Years --</option>
+			  <?php
+			  $schoolYear = new SchoolYear();
+			  $schoolYears = $schoolYear->show();
+            	 foreach ($schoolYears as $schoolYear) : ?>
+                <option value="<?php echo $schoolYear['school_year_id']; ?>"><?php echo $schoolYear['school_year_name']; ?></option>
+              <?php endforeach; ?>
+            </select>
+          </div>
+		  <div class="form-group">
+		  <label for="semester" class="form-label">Semesters</label>
+            <select class="form-control" id="semester" name="semester" required>
+				
+              <option value="">-- Semester --</option>
+			  <?php
+			  $semester = new Semester();
+			  $semesters = $semester->show();
+            	 foreach ($semesters as $semester) : ?>
+                <option value="<?php echo $semester['semester_id']; ?>"><?php echo $semester['semester_name']; ?></option>
+              <?php endforeach; ?>
+            </select>
+          </div>
+		  <div class="modal-footer">
+                    <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
+                    <input type="hidden" name="action" value="feeSchedAdd">
+                    <input type="submit" class="btn btn-success" value="Save">
+                </div>
+        </form>
+      </div>
+    </div>
+  </div>
 </div>
-<!-- Edit Modal HTML -->
-<div id="editFeesModal" class="modal fade">
+
+<!-- Create Fee Modal HTML -->
+<div id="addFeesModal" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form action="createfees.php" method="POST">
+                <div class="modal-header">
+                    <h4 class="modal-title">Add Fees</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="feeType">Type of Fee</label>
+                        <select name="feeType" id="feeType" class="form-control" required>
+                            <option value="" disabled selected>Select your option</option>
+                            <option value="University">University</option>
+                            <option value="Local">Local</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="feeName">Description</label>
+                        <input type="text" name="feeName" id="feeName" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="feeAmount">Amount</label>
+                        <input type="number" name="feeAmount" id="feeAmount" class="form-control" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
+                    <input type="hidden" name="action" value="add">
+                    <input type="submit" class="btn btn-success" value="add">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- Fee Schedule Modal HTML -->
+<div id="feeSchdaweModal" class="modal fade">
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<form>
 				<div class="modal-header">						
-					<h4 class="modal-title">Edit Fees</h4>
+					<h4 class="modal-title">Activate Fees</h4>
 					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 				</div>
-				<div class="modal-body">					
-					<div class="form-group">
-						<label>Type of Fee</label>
-						<input type="text" class="form-control" required>
-					</div>
-					<div class="form-group">
-						<label>Description</label>
-						<input type="email" class="form-control" required>
-					</div>
-					<div class="form-group">
-						<label>Duration</label>
-						<input type="text" class="form-control" required>
-					</div>
-					<div class="form-group">
-					<label>Amount</label>
-						<input type="number" class="form-control" required>
-					</div>					
-				</div>
+				<div class="modal-body">
+			<div class="mb-3">
+            <label for="schoolYear" class="form-label">School Year</label>
+            <select class="form-control" id="schoolYear" name="schoolYear" required>
+				
+              <option value="">-- Select School Year --</option>
+			  <?php
+			  $schoolYear = new SchoolYear();
+			  $schoolYears = $schoolYear->show();
+            	 foreach ($schoolYears as $schoolYear) : ?>
+                <option value="<?php echo $schoolYear['school_year_id']; ?>"><?php echo $schoolYear['school_year_name']; ?></option>
+              <?php endforeach; ?>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="semester" class="form-label">Semester</label>
+            <select class="form-control" id="semester" name="semester" required>
+              <option value="">-- Select Semester --</option>
+              <?php
+			  $semester = new Semester();
+			  $semesters = $semester->show();
+			   foreach ($semesters as $semester) : ?>
+                <option value="<?php echo $semester['semester_id']; ?>"><?php echo $semester['semester_name']; ?></option>
+              <?php endforeach; ?>
+            </select>
+          </div>
 				<div class="modal-footer">
 					<input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
 					<input type="submit" class="btn btn-info" value="Save">
@@ -223,8 +275,9 @@
 <div id="deleteFeesModal" class="modal fade">
 	<div class="modal-dialog">
 		<div class="modal-content">
-			<form>
+			<form action="deletefees.php" method="POST">
 				<div class="modal-header">						
+				<div class="modal-header">
 					<h4 class="modal-title">Delete Fees</h4>
 					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 				</div>
@@ -234,6 +287,8 @@
 				</div>
 				<div class="modal-footer">
 					<input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
+					<input type="hidden" name="action" value="delete">
+					<input type="hidden" name="fee_id" value="<?php echo $fee['fee_id']; ?>">
 					<input type="submit" class="btn btn-danger" value="Delete">
 				</div>
 			</form>
@@ -250,23 +305,4 @@
                     el.classList.toggle("toggled");
                 };
             </script>
-			
-<script>
-/* Loop through all dropdown buttons to toggle between hiding and showing its dropdown content - This allows the user to have multiple dropdowns without any conflict */
-var dropdown = document.getElementsByClassName("dropdown-btn");
-var listgroup = document.getElementsByClassName("list-group-item")
-var i;
-
-for (i = 0; i < dropdown.length; i++) {
-  dropdown[i].addEventListener("click", function() {
-    this.classList.toggle("active");
-    var dropdownContent = this.nextElementSibling;
-    if (dropdownContent.style.display === "block") {
-      dropdownContent.style.display = "none";
-    } else {
-      dropdownContent.style.display = "block";
-    }
-  });
-}
-</script>
 </html>

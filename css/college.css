@@ -49,14 +49,6 @@
 	-o-transition: margin 0.25s ease-out;
 	transition: margin 0.25s ease-out;
   }
-  a {
-	color:black;
-	text-decoration: none;}
-	
-	a:hover{
-	  color: #fff;;
-	  text-decoration: none;
-	}
   
   #sidebar-wrapper .sidebar-heading {
 	padding: 0.875rem 1.25rem;
@@ -350,4 +342,14 @@ table.table .avatar {
 }	
 .modal form label {
 	font-weight: normal;
+}
+.container{
+    background-color: #fff;
+    max-width: 80%;
+    border-radius: 20px;
+    padding-bottom: 20px;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.265);
+}
+.border{
+	margin-left: 15px;
 }
